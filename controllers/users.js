@@ -7,11 +7,11 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUser = (req, res) => {
-  User.findById(req.params.id)
+  User.findOne(req.params.id)
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
       }
       return res.status(500).send({ message: 'Неизвестная ошибка' });
     });
