@@ -9,18 +9,17 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
-      if (user) {
-        res.send(user);
-        return;
+      if (!user) {
+        return Promise.reject(new Error('Пользователь не существует'));
       }
-      return Promise.reject(new Error('Пользователь не существует'));
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: 'Неккоректный id' });
+        return res.status(400).send({ message: 'Неккоректный id' });
       }
       if (err.message === 'Пользователь не существует') {
-        return res.status(400).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
       }
       return res.status(500).send({ message: 'Неизвестная ошибка' });
     });
