@@ -12,7 +12,6 @@ app.use((req, res, next) => {
   req.user = {
     _id: '62d1964f0885ea5c2115c21d', // вставьте сюда _id созданного в предыдущем пункте пользователя
   };
-
   next();
 });
 
@@ -22,6 +21,10 @@ mongoose.connect('mongodb://127.0.0.1/mestodb', {
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
+app.use((req, res) => {
+  res.status(404).send('not found');
+});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
