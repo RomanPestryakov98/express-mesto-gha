@@ -28,11 +28,11 @@ module.exports.deleteCard = (req, res) => {
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Некорректный id карточки' });
-      }
       if (err.message === 'Карточки не существует') {
         return res.status(404).send({ message: 'Карточка не найдена' });
+      }
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Некорректный id карточки' });
       }
       return res.status(500).send({ message: 'Неизвестная ошибка' });
     });
@@ -51,11 +51,11 @@ module.exports.likeCard = (req, res) => {
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Передан несуществующий _id карточки' });
-      }
       if (err.message === 'Карточки не существует') {
         return res.status(404).send({ message: 'Карточка не найдена' });
+      }
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Передан несуществующий _id карточки' });
       }
       return res.status(500).send({ message: 'Неизвестная ошибка' });
     });

@@ -53,11 +53,11 @@ module.exports.updateUser = (req, res) => {
   )
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Некорректный id пользователя' });
-      }
       if (err.name === 'ValidationError') {
         return res.status(404).send({ message: 'Переданы некорректные данные' });
+      }
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Некорректный id пользователя' });
       }
       return res.status(500).send({ message: 'Неизвестная ошибка' });
     });
@@ -76,11 +76,11 @@ module.exports.updateAvatar = (req, res) => {
   )
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Некорректный id пользователя' });
-      }
       if (err.name === 'ValidationError') {
         return res.status(404).send({ message: 'Переданы некорректные данные' });
+      }
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Некорректный id пользователя' });
       }
       return res.status(500).send({ message: 'Неизвестная ошибка' });
     });
