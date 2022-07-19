@@ -79,13 +79,18 @@ module.exports.updateAvatar = (req, res) => {
       runValidators: true,
     },
   )
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Некорректный id пользователя'));
+      }
+      return res.send(user);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(404).send({ message: 'Переданы некорректные данные' });
+        return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
-      if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Некорректный id пользователя' });
+      if (err.message === 'Некорректный id пользователя') {
+        return res.status(404).send({ message: 'Пользователь не найден' });
       }
       return res.status(500).send({ message: 'Неизвестная ошибка' });
     });
