@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { errors } = require('celebrate');
+const { errors, celebrate, Joi } = require('celebrate');
 const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
@@ -15,7 +15,15 @@ mongoose.connect('mongodb://127.0.0.1/mestodb', {
 });
 
 app.post('/signin', require('./controllers/users').login);
-app.post('/signup', require('./controllers/users').createUser);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
+    email: Joi.string().required(),
+    password: Joi.string().required(),
+  }),
+}), require('./controllers/users').createUser);
 
 app.use(auth);
 app.use('/users', require('./routes/users'));
