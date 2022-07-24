@@ -23,6 +23,7 @@ app.use('/cards', require('./routes/cards'));
 
 app.use(errors());
 app.use((err, req, res, next) => {
+  console.log(next);
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)
