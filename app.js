@@ -14,13 +14,18 @@ mongoose.connect('mongodb://127.0.0.1/mestodb', {
   useNewUrlParser: true,
 });
 
-app.post('/signin', require('./controllers/users').login);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+}), require('./controllers/users').login);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
-    email: Joi.string().required(),
+    avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[.\S]+#?/),
+    email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
 }), require('./controllers/users').createUser);
@@ -31,7 +36,6 @@ app.use('/cards', require('./routes/cards'));
 
 app.use(errors());
 app.use((err, req, res, next) => {
-  console.log(next);
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)
@@ -40,6 +44,10 @@ app.use((err, req, res, next) => {
         ? 'На сервере произошла ошибка'
         : message,
     });
+  next();
+});
+app.use((req, res) => {
+  res.status(404).send({ message: 'Страница не найдена' });
 });
 
 app.listen(PORT, () => {
