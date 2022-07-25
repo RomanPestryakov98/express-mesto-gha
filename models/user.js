@@ -1,3 +1,4 @@
+const mongooseHidden = require('mongoose-hidden')();
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const { isEmail } = require('validator');
@@ -39,8 +40,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     select: false,
+    hide: true,
   },
 });
+
+userSchema.plugin(mongooseHidden);
 
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
