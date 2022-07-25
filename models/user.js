@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.plugin(mongooseHidden);
+userSchema.plugin(mongooseHidden, { hidden: { _id: false, password: true } });
 
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
