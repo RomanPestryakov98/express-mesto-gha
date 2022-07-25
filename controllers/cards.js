@@ -22,38 +22,42 @@ module.exports.createCards = (req, res, next) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest('Переданы некорректные данные');
+        next(new BadRequest('Переданы некорректные данные'));
+        return;
       }
-      throw new InternalServerError();
-    })
-    .catch(next);
+      next(new InternalServerError());
+    });
 };
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.id)
     .then((cardUser) => {
       if (!cardUser) {
-        throw new NotFound('Карточки не существует');
+        const errNotFound = new NotFound('Карточки не существует');
+        throw errNotFound;
       }
       if (cardUser.owner.toString() !== req.user._id) {
-        throw new Forbidden('Нет прав на удаление карточки');
+        const errForbidden = new Forbidden('Нет прав на удаление карточки');
+        throw errForbidden;
       }
       return Card.findByIdAndRemove(req.params.id)
         .then((card) => res.send(card));
     })
     .catch((err) => {
-      if (err.message === 'Карточки не существует') {
-        return Promise.reject(err);
+      if (err.name === 'NotFound') {
+        next(err);
+        return;
       }
       if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные');
+        next(new BadRequest('Переданы некорректные данные'));
+        return;
       }
-      if (err.message === 'Нет прав на удаление карточки') {
-        return Promise.reject(err);
+      if (err.name === 'Forbidden') {
+        next(err);
+        return;
       }
-      throw new InternalServerError();
-    })
-    .catch(next);
+      next(new InternalServerError());
+    });
 };
 
 module.exports.likeCard = (req, res, next) => {
@@ -64,20 +68,22 @@ module.exports.likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFound('Карточки не существует');
+        const errNotFound = new NotFound('Карточки не существует');
+        throw errNotFound;
       }
       return res.send(card);
     })
     .catch((err) => {
-      if (err.message === 'Карточки не существует') {
-        return Promise.reject(err);
+      if (err.name === 'NotFound') {
+        next(err);
+        return;
       }
       if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные');
+        next(new BadRequest('Переданы некорректные данные'));
+        return;
       }
-      throw new InternalServerError();
-    })
-    .catch(next);
+      next(new InternalServerError());
+    });
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -88,18 +94,20 @@ module.exports.dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFound('Карточки не существует');
+        const errNotFound = new NotFound('Карточки не существует');
+        throw errNotFound;
       }
       return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest('Переданы некорректные данные');
+        next(new BadRequest('Переданы некорректные данные'));
+        return;
       }
-      if (err.message === 'Карточки не существует') {
-        return Promise.reject(err);
+      if (err.name === 'NotFound') {
+        next(err);
+        return;
       }
-      throw new InternalServerError();
-    })
-    .catch(next);
+      next(new InternalServerError());
+    });
 };

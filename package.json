@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/RomanPestryakov98/express-mesto-gha.git"
   },
-  "author": "",
+  "author": "Roman",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/RomanPestryakov98/express-mesto-gha/issues"

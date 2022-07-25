@@ -46,20 +46,22 @@ module.exports.getUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        throw new NotFound('Пользователь не существует');
+        const errNotFound = new NotFound('Пользователь не существует');
+        throw errNotFound;
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequest('Неккоректный id');
+        next(new BadRequest('Неккоректный id'));
+        return;
       }
-      if (err.message === 'Пользователь не существует') {
-        return Promise.reject(err);
+      if (err.name === 'NotFound') {
+        next(err);
+        return;
       }
-      throw new InternalServerError();
-    })
-    .catch(next);
+      next(new InternalServerError());
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -79,11 +81,11 @@ module.exports.createUser = (req, res, next) => {
         .then((user) => res.send(user))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            throw new BadRequest('Переданы некорректные данные');
+            next(new BadRequest('Переданы некорректные данные'));
+            return;
           }
-          throw new InternalServerError();
-        })
-        .catch(next);
+          next(new InternalServerError());
+        });
     })
     .catch(next);
 };
@@ -101,20 +103,22 @@ module.exports.updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFound('Некорректный id пользователя');
+        const errNotFound = new NotFound('Некорректный id пользователя');
+        throw errNotFound;
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest('Переданы некорректные данные');
+        next(new BadRequest('Переданы некорректные данные'));
+        return;
       }
-      if (err.message === 'Некорректный id пользователя') {
-        return Promise.reject(err);
+      if (err.name === 'NotFound') {
+        next(err);
+        return;
       }
-      throw new InternalServerError();
-    })
-    .catch(next);
+      next(new InternalServerError());
+    });
 };
 
 module.exports.updateAvatar = (req, res, next) => {
@@ -130,18 +134,20 @@ module.exports.updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFound('Некорректный id пользователя');
+        const errNotFound = new NotFound('Некорректный id пользователя');
+        throw errNotFound;
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequest('Переданы некорректные данные');
+        next(new BadRequest('Переданы некорректные данные'));
+        return;
       }
-      if (err.message === 'Некорректный id пользователя') {
-        return Promise.reject(err);
+      if (err.name === 'NotFound') {
+        next(err);
+        return;
       }
-      throw new InternalServerError();
-    })
-    .catch(next);
+      next(new InternalServerError());
+    });
 };

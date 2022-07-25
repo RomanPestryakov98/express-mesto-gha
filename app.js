@@ -35,6 +35,9 @@ app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
+app.use((req, res) => {
+  res.status(404).send({ message: 'Страница не найдена' });
+});
 app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
@@ -46,9 +49,6 @@ app.use((err, req, res, next) => {
         : message,
     });
   next();
-});
-app.use((req, res) => {
-  res.status(404).send({ message: 'Страница не найдена' });
 });
 
 app.listen(PORT, () => {
